@@ -9,11 +9,12 @@ const client = new Client({ database: 'omdb' });
 console.log("Welcome to search-movies-cli!");
 
 
-const searchString = readlineSync.question("Search for what movie?")
+const searchString = readlineSync.question("Search for what movie? ('q' to quit)")
 
 async function excecute (){
+    if (readlineSync.keyIn)
     await client.connect();
-    const text = "SELECT * FROM movies WHERE kind = $1 AND name LIKE $2 LIMIT 5";
+    const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND name LIKE $2 LIMIT 5";
     const value = ["movie", `%${searchString}%`];
 
     const res = await client.query(text,value);
