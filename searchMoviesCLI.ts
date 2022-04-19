@@ -25,8 +25,9 @@ async function excecute (){
         
             const res = await client.query(text,value);
             const data = res.rows
-            //lowerCaseInput = readlineSync.question("Search for what movie? : ")
+            console.table(data)
             let movieOptions = data.map((movie) => movie.name)
+            let index = readlineSync.keyInSelect(movieOptions, 'Choose a movie row number to favourite');
 
         }    
     }
