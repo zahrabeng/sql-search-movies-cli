@@ -9,13 +9,14 @@ const client = new Client({ database: 'omdb' });
 console.log("Welcome to search-movies-cli!");
 
 
-const searchString = readlineSync.question("Search for what movie? ('q' to quit) ")
+const searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
+const lowerCaseInput = searchString.toLowerCase()
 
 
 async function excecute (){
     await client.connect();
-    const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND name LIKE $2 ORDER BY date LIMIT 5";
-    const value = ["movie", `%${searchString}%`];
+    const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date LIMIT 5";
+    const value = ["movie", `%${lowerCaseInput}%`];
 
     if(searchString === 'q'){
         console.log('Quit Successfully')
