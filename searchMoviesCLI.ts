@@ -14,7 +14,7 @@ const searchString = readlineSync.question("Search for what movie?")
 async function excecute (){
     await client.connect();
     const text = "SELECT * FROM movies WHERE kind = $1 AND name LIKE $2 LIMIT 5";
-    const value = ["movie" , ];
+    const value = ["movie", `%${searchString}%`];
 
     const res = await client.query(text,value);
     console.table(res.rows);
