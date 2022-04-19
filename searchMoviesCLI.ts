@@ -24,8 +24,9 @@ async function excecute (){
             const value = ["movie", `%${lowerCaseInput}%`];
         
             const res = await client.query(text,value);
-            console.table(res.rows);
-            lowerCaseInput = readlineSync.question("Search for what movie? : ")
+            const data = res.rows
+            //lowerCaseInput = readlineSync.question("Search for what movie? : ")
+            let movieOptions = data.map((movie) => movie.name)
 
         }    
     }
