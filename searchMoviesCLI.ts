@@ -16,7 +16,7 @@ async function excecute (){
     let lowerCaseInput = searchString.toLowerCase()
 
     while(lowerCaseInput !== 'q'){
-        const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date LIMIT 5";
+        const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
         const value = ["movie", `%${lowerCaseInput}%`];
     
         const res = await client.query(text,value);
