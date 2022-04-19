@@ -9,7 +9,7 @@ console.log("Welcome to search-movies-cli!");
 
 async function excecute (){
     await client.connect();
-    const text = "SELECT * FROM movies WHERE kind = $1";
+    const text = "SELECT * FROM movies WHERE kind = $1 LIMIT 5";
     const value = ["movie"];
 
     const res = await client.query(text,value);
