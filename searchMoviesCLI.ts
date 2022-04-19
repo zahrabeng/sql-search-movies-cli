@@ -19,22 +19,21 @@ async function excecute (){
         let searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
         let lowerCaseInput = searchString.toLowerCase()
 
-        while(lowerCaseInput !== 'q'){
+        while(lowerCaseInput){
             const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
             const value = ["movie", `%${lowerCaseInput}%`];
         
             const res = await client.query(text,value);
             console.table(res.rows);
-            lowerCaseInput = readlineSync.question("Search for what movie? ('q' to quit): ")
-        }
-            
-        if(lowerCaseInput === 'q'){
-            console.log('Quit Successfully')
-            await client.end(); 
-        }
-    }else if (options[index] === "See Favourites"){
+            lowerCaseInput = readlineSync.question("Search for what movie? : ")
 
+        }    
+    }
+    else if (options[index] === "Quit"){
+        console.log('Quit Successfully')
+        await client.end(); 
     }
 }
 
 excecute()
+
