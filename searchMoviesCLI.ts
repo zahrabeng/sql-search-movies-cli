@@ -12,23 +12,29 @@ console.log("Welcome to search-movies-cli!");
 async function excecute (){
     await client.connect();
 
-    let searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
-    let lowerCaseInput = searchString.toLowerCase()
+    let options = ["Search" , "See Favourites" , "Quit"]
+    let index = readlineSync.keyInSelect(options, 'Choose an Action!');
 
-    while(lowerCaseInput !== 'q'){
-        const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
-        const value = ["movie", `%${lowerCaseInput}%`];
-    
-        const res = await client.query(text,value);
-        console.table(res.rows);
-        lowerCaseInput = readlineSync.question("Search for what movie? ('q' to quit): ")
-    }
+    if (options[index] === "Search"){
+        let searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
+        let lowerCaseInput = searchString.toLowerCase()
+
+        while(lowerCaseInput !== 'q'){
+            const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
+            const value = ["movie", `%${lowerCaseInput}%`];
         
-    if(lowerCaseInput === 'q'){
-        console.log('Quit Successfully')
-        await client.end(); 
-    }
+            const res = await client.query(text,value);
+            console.table(res.rows);
+            lowerCaseInput = readlineSync.question("Search for what movie? ('q' to quit): ")
+        }
+            
+        if(lowerCaseInput === 'q'){
+            console.log('Quit Successfully')
+            await client.end(); 
+        }
+    }else if (options[index] === "See Favourites"){
 
+    }
 }
 
 excecute()
