@@ -9,53 +9,51 @@ const client = new Client({ database: 'omdb' });
 
 console.log("Welcome to search-movies-cli!");
 
-async function excecute (){
+async function excecute() {
     await client.connect()
 
-    while(client){
+    while (client) {
 
-    let options = ["Search" , "See Favourites" , "Quit"]
-    let index = readlineSync.keyInSelect(options, 'Choose an Action!');
-    
-    if (options[index] === "Search"){
-        let searchString = readlineSync.question("Search for what movie?: ")
-        let lowerCaseInput = searchString.toLowerCase()
+        let options = ["Search", "See Favourites", "Quit"]
+        let index = readlineSync.keyInSelect(options, 'Choose an Action!');
 
-        if(lowerCaseInput){
-            const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
-            const value = ["movie", `%${lowerCaseInput}%`];
-        
-            const res = await client.query(text,value);
-            const data = res.rows
-            console.table(data)
+        if (options[index] === "Search") {
+            let searchString = readlineSync.question("Search for what movie?: ")
+            let lowerCaseInput = searchString.toLowerCase()
 
-            let movieOptions = data.map((movie) => movie.name)
-            let index = readlineSync.keyInSelect(movieOptions, 'Choose a movie row number to favourite');
+            if (lowerCaseInput) {
+                const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
+                const value = ["movie", `%${lowerCaseInput}%`];
 
-            let chosenMovie = movieOptions[index]
+                const res = await client.query(text, value);
+                const data = res.rows
+                console.table(data)
 
-            if(chosenMovie){
-                console.log(`Saving favourite movie: ${chosenMovie}`);
+                let movieOptions = data.map((movie) => movie.name)
+                let index = readlineSync.keyInSelect(movieOptions, 'Choose a movie row number to favourite');
+                let chosenMovie = movieOptions[index]
 
-                const text = "INSERT INTO favourites (movie_id) SELECT id FROM movies WHERE name = $1 RETURNING *";
-                const values = [`${chosenMovie}`];
-                const res = await client.query(text,values);
-               
+                if (chosenMovie) {
+                    console.log(`Saving favourite movie: ${chosenMovie}`);
+                    const text = "INSERT INTO favourites (movie_id) SELECT id FROM movies WHERE name = $1 RETURNING *";
+                    const values = [`${chosenMovie}`];
+                    const res = await client.query(text, values);
+
+                }
             }
-        }   
-    }
-    else if (options[index] === "Quit"){
-        console.log('Quit Successfully')
-        await client.end(); 
-        break
-    } 
+        }
+        else if (options[index] === "Quit") {
+            console.log('Quit Successfully')
+            await client.end();
+            break
+        }
 
-    else if (options[index] === "See Favourites"){
-        const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id) ";
-        const favouritesTable = await client.query(joinTables);
-        console.table(favouritesTable.rows)
+        else if (options[index] === "See Favourites") {
+            const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id) ";
+            const favouritesTable = await client.query(joinTables);
+            console.table(favouritesTable.rows)
+        }
     }
-}
 }
 
 excecute()
