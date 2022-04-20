@@ -19,16 +19,29 @@ async function excecute (){
         let searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
         let lowerCaseInput = searchString.toLowerCase()
 
-        while(lowerCaseInput){
+        if(lowerCaseInput){
             const text = "SELECT id, name, date, runtime, budget, revenue, vote_average, votes_count FROM movies WHERE kind = $1 AND LOWER(name) LIKE $2 ORDER BY date DESC LIMIT 10";
             const value = ["movie", `%${lowerCaseInput}%`];
         
             const res = await client.query(text,value);
             const data = res.rows
             console.table(data)
+
             let movieOptions = data.map((movie) => movie.name)
             let index = readlineSync.keyInSelect(movieOptions, 'Choose a movie row number to favourite');
 
+            let chosenMovie = movieOptions[index]
+
+            if(chosenMovie){
+                console.log(`Saving favourite movie: ${chosenMovie}`);
+                const text = "INSERT INTO favourites (movie_id) SELECT id FROM movies WHERE name = $1 RETURNING *";
+                const values = [`${chosenMovie}`];
+
+                const res = await client.query(text,values);
+                console.log(res.rows[0])
+
+            }
+            
         }    
     }
     else if (options[index] === "Quit"){
