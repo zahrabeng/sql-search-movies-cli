@@ -34,12 +34,15 @@ async function excecute (){
 
             if(chosenMovie){
                 console.log(`Saving favourite movie: ${chosenMovie}`);
+
                 const text = "INSERT INTO favourites (movie_id) SELECT id FROM movies WHERE name = $1 RETURNING *";
                 const values = [`${chosenMovie}`];
-
                 const res = await client.query(text,values);
-                console.log(res.rows[0])
+                console.log(res.rows[0]);
 
+                const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id)"
+                const joinedRes = await client.query(joinTables)
+                console.table(joinedRes.rows)
             }
             
         }    
