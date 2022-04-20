@@ -10,13 +10,15 @@ const client = new Client({ database: 'omdb' });
 console.log("Welcome to search-movies-cli!");
 
 async function excecute (){
-    await client.connect();
+    await client.connect()
+
+    while(client){
 
     let options = ["Search" , "See Favourites" , "Quit"]
     let index = readlineSync.keyInSelect(options, 'Choose an Action!');
-
+    
     if (options[index] === "Search"){
-        let searchString = readlineSync.question("Search for what movie? ('q' to quit): ")
+        let searchString = readlineSync.question("Search for what movie?: ")
         let lowerCaseInput = searchString.toLowerCase()
 
         if(lowerCaseInput){
@@ -38,19 +40,22 @@ async function excecute (){
                 const text = "INSERT INTO favourites (movie_id) SELECT id FROM movies WHERE name = $1 RETURNING *";
                 const values = [`${chosenMovie}`];
                 const res = await client.query(text,values);
-                console.log(res.rows[0]);
-
-                const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id)"
-                const joinedRes = await client.query(joinTables)
-                console.table(joinedRes.rows)
+               
             }
-            
-        }    
+        }   
     }
     else if (options[index] === "Quit"){
         console.log('Quit Successfully')
         await client.end(); 
+        break
+    } 
+
+    else if (options[index] === "See Favourites"){
+        const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id) ";
+        const favouritesTable = await client.query(joinTables);
+        console.table(favouritesTable.rows)
     }
+}
 }
 
 excecute()
