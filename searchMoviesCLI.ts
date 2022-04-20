@@ -49,6 +49,7 @@ async function excecute() {
         }
 
         else if (options[index] === "See Favourites") {
+            console.log("Here are your saved favourites!")
             const joinTables = "SELECT movies.id, name, date, runtime, budget, revenue, vote_average, votes_count FROM favourites JOIN movies ON (favourites.movie_id = movies.id) ";
             const favouritesTable = await client.query(joinTables);
             console.table(favouritesTable.rows)
